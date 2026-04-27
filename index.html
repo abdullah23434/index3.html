@@ -2,103 +2,119 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FALCONS - الموسوعة الحقيقية</title>
+    <title>THE VAULT - PROJECT X</title>
     <style>
-        :root { --neon: #00ff41; --bg: #050505; --card: #0d0d0d; }
-        body { background: var(--bg); color: #fff; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 20px; }
-        
-        #start-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
-        .start-btn { background: var(--neon); color: black; border: none; padding: 20px 80px; font-size: 2rem; cursor: pointer; font-weight: bold; border-radius: 5px; }
-        .ms { margin-top: 20px; color: #444; letter-spacing: 5px; font-weight: bold; }
+        body {
+            background: #000;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
 
-        h1.main-title { text-align: center; color: var(--neon); font-size: 3rem; text-shadow: 0 0 15px var(--neon); }
+        /* تأثير التشويش (Glitch) */
+        .glitch {
+            font-size: 5rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            position: relative;
+            text-shadow: 0.05em 0 0 rgba(255,0,0,.75), -0.025em -0.05em 0 rgba(0,255,0,.75), 0.025em 0.05em 0 rgba(0,0,255,.75);
+            animation: glitch 500ms infinite;
+        }
 
-        /* سطر فيه شريحتين مربعات كبيرة */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1400px; margin: 0 auto; }
+        @keyframes glitch {
+            0% { text-shadow: 0.05em 0 0 rgba(255,0,0,.75), -0.05em -0.025em 0 rgba(0,255,0,.75), -0.025em 0.05em 0 rgba(0,0,255,.75); }
+            14% { text-shadow: 0.05em 0 0 rgba(255,0,0,.75), -0.05em -0.025em 0 rgba(0,255,0,.75), -0.025em 0.05em 0 rgba(0,0,255,.75); }
+            15% { text-shadow: -0.05em -0.025em 0 rgba(255,0,0,.75), 0.025em 0.025em 0 rgba(0,255,0,.75), -0.05em -0.05em 0 rgba(0,0,255,.75); }
+            /* ... استكمال الأنيميشن */
+        }
 
-        .plane-item { background: var(--card); border: 2px solid #222; cursor: pointer; transition: 0.3s; }
-        .plane-item:hover { border-color: var(--neon); }
-        
-        .plane-header { padding: 60px 20px; text-align: center; }
-        .plane-header h2 { font-size: 4rem; margin: 0; color: var(--neon); font-weight: 900; }
+        .terminal {
+            width: 80%;
+            max-width: 900px;
+            background: rgba(10, 10, 10, 0.9);
+            border: 1px solid #0f0;
+            padding: 30px;
+            box-shadow: 0 0 20px #0f0;
+            height: 400px;
+            overflow-y: auto;
+        }
 
-        .plane-content { max-height: 0; overflow: hidden; transition: max-height 0.5s; background: #111; padding: 0 40px; }
-        .plane-item.active .plane-content { max-height: 3000px; padding: 50px 40px; border-top: 3px solid var(--neon); }
+        .command-line {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
 
-        .deep-info { font-size: 1.1rem; line-height: 2; color: #bbb; text-align: justify; }
-        .deep-info b { color: #fff; font-size: 1.3rem; display: block; margin-top: 20px; border-right: 4px solid var(--neon); padding-right: 10px; }
+        input {
+            background: transparent;
+            border: none;
+            color: #0f0;
+            font-family: inherit;
+            font-size: 1.2rem;
+            outline: none;
+            width: 100%;
+        }
 
-        .saudi-badge { background: #006C35; color: white; padding: 10px 20px; display: inline-block; margin-top: 30px; font-weight: bold; font-size: 1.2rem; }
-        .hidden { display: none !important; }
+        .made-saudi {
+            position: fixed;
+            bottom: 20px;
+            letter-spacing: 10px;
+            opacity: 0.5;
+        }
     </style>
 </head>
 <body>
 
-    <div id="start-screen">
-        <h1 style="color:var(--neon); font-size: 4rem;">FALCONS DATABASE</h1>
-        <button class="start-btn" onclick="document.getElementById('start-screen').classList.add('hidden')">دخول الموسوعة</button>
-        <div class="ms">MADE IN SAUDI</div>
+    <div class="glitch">PROJECT X</div>
+
+    <div class="terminal" id="output">
+        <div>> جاري تشغيل النظام...</div>
+        <div>> تم الاتصال بنجاح.</div>
+        <div>> أدخل أمراً للبدء (اكتب: 'طائرات', 'سعودي', 'تاريخ')...</div>
     </div>
 
-    <h1 class="main-title">موسوعة الطيران الشاملة</h1>
-    <div class="grid" id="main-grid"></div>
+    <div class="command-line">
+        <span>></span>
+        <input type="text" id="input" autofocus>
+    </div>
+
+    <div class="made-saudi">MADE IN SAUDI</div>
 
     <script>
-        // قائمة طائرات حقيقية متنوعة وبدون تكرار
-        const realPlanes = [
-            { name: "F-15SA", type: "مقاتلة سيادة جوية" },
-            { name: "Eurofighter Typhoon", type: "مقاتلة متعددة المهام" },
-            { name: "F-35 Lightning II", type: "مقاتلة شبحية جيل خامس" },
-            { name: "Boeing 747-8", type: "طائرة نقل مدني عملاقة" },
-            { name: "Airbus A380", type: "أكبر طائرة ركاب في العالم" },
-            { name: "C-130 Hercules", type: "طائرة نقل عسكري تكتيكي" },
-            { name: "Apache AH-64D", type: "مروحية هجومية" },
-            { name: "B-2 Spirit", type: "قاذفة استراتيجية شبحية" },
-            { name: "F-22 Raptor", type: "مقاتلة تفوق جوي" },
-            { name: "Tornado IDS", type: "طائرة هجوم أرضي" },
-            { name: "GlobalEye", type: "طائرة إنذار مبكر (AWACS)" },
-            { name: "Su-57 Felon", type: "مقاتلة شبحية روسية" },
-            { name: "Rafale", type: "مقاتلة فرنسية رافال" },
-            { name: "Black Hawk", type: "مروحية نقل عسكري" },
-            { name: "KC-130J", type: "طائرة تزويد بالوقود جواً" },
-            { name: "P-8 Poseidon", type: "طائرة دورية بحرية" },
-            { name: "An-225 Mriya", type: "أضخم طائرة شحن في التاريخ" },
-            { name: "E-3 Sentry", type: "طائرة رادار وإنذار مبكر" },
-            { name: "F-16 Fighting Falcon", type: "مقاتلة خفيفة متعددة المهام" },
-            { name: "A350-1000", type: "طائرة ركاب طويلة المدى" }
-        ];
+        const input = document.getElementById('input');
+        const output = document.getElementById('output');
 
-        function generateMassiveInfo(plane) {
-            let info = `<b>التاريخ والنشأة الكاملة:</b> تعتبر ${plane.name} من نوع ${plane.type} نقلة نوعية في تاريخ الطيران. بدأ العمل على هذا المشروع لتلبية احتياجات العمليات الجوية المعقدة.<br>`;
-            
-            // هنا نولد 100 سطر معلوماتي حقيقي تقريباً لكل طائرة
-            for(let i=1; i<=30; i++) {
-                info += `<b>المنظومة التقنية رقم ${i}:</b> تم تزويد الطائرة بأحدث أنظمة الاستشعار عن بعد والرادارات التي تعمل بنظام المسح الإلكتروني النشط. تم اختبار الهيكل في ظروف ضغط جوي هائلة لضمان سلامة الطيار والحمولة. أنظمة التحكم الرقمية (Fly-by-wire) تضمن استجابة فائقة السرعة للمناورات الصعبة. سعة التخزين والوقود تم تطويرها لتغطي مسافات قارة كاملة دون توقف. تم دمج أنظمة الذكاء الاصطناعي للمساعدة في اتخاذ القرارات القتالية والملاحية بسرعة الأجزاء من الثانية.<br>`;
+        input.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const val = this.value.trim();
+                processCommand(val);
+                this.value = '';
             }
-            
-            info += `<br><b>حالة الخدمة:</b> هذه الطائرة موجودة في السعودية وتعمل ضمن منظومة الدفاع أو النقل الجوي بكفاءة 100%.`;
-            return info;
-        }
-
-        const grid = document.getElementById('main-grid');
-
-        realPlanes.forEach(p => {
-            const card = document.createElement('div');
-            card.className = 'plane-item';
-            card.onclick = function() { this.classList.toggle('active'); };
-            card.innerHTML = `
-                <div class="plane-header">
-                    <h2>${p.name}</h2>
-                    <p style="color:#666">${p.type}</p>
-                </div>
-                <div class="plane-content">
-                    <div class="deep-info">${generateMassiveInfo(p)}</div>
-                    <div class="saudi-badge">🇸🇦 موجودة في السعودية</div>
-                </div>
-            `;
-            grid.appendChild(card);
         });
+
+        function processCommand(cmd) {
+            let res = '';
+            if (cmd === 'طائرات') {
+                res = "جاري استدعاء سجلات الصقور... F-15SA جاهزة، Typhoon في الخدمة، Tornado قيد المتابعة.";
+            } else if (cmd === 'سعودي') {
+                res = "النظام سعودي 100% - فخر الصناعة الرقمية الوطنية.";
+            } else if (cmd === 'تاريخ') {
+                res = "اليوم هو: " + new Date().toLocaleDateString('ar-SA');
+            } else {
+                res = "أمر غير معروف. حاول مجدداً.";
+            }
+
+            const div = document.createElement('div');
+            div.innerHTML = `<span style="color: #fff">> ${cmd}</span><br>${res}<br><br>`;
+            output.appendChild(div);
+            output.scrollTop = output.scrollHeight;
+        }
     </script>
 </body>
 </html>
