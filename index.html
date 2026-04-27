@@ -3,224 +3,281 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Falcons - موسوعة الصقور للطيران</title>
+    <title>FALCONS - موسوعة الصقور</title>
     <style>
         :root {
-            --neon-green: #00ff41;
-            --dark-bg: #0d0d0d;
-            --card-bg: #1a1a1a;
+            --neon: #00ff41;
+            --bg: #050505;
+            --card: #121212;
+            --glass: rgba(0, 255, 65, 0.1);
         }
 
         body {
-            background-color: var(--dark-bg);
+            background-color: var(--bg);
             color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             margin: 0;
             padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            overflow-x: hidden;
         }
 
         h1 {
-            color: var(--neon-green);
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            border-bottom: 2px solid var(--neon-green);
-            padding-bottom: 10px;
-            text-shadow: 0 0 10px var(--neon-green);
+            text-align: center;
+            color: var(--neon);
+            text-shadow: 0 0 15px var(--neon);
+            margin-bottom: 30px;
         }
 
-        .search-container {
-            margin: 20px 0;
-            width: 100%;
-            max-width: 500px;
+        /* حاوية المربعات */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        input {
-            width: 100%;
-            padding: 12px;
-            background: var(--card-bg);
-            border: 1px solid var(--neon-green);
-            color: white;
-            border-radius: 5px;
-            outline: none;
-        }
-
-        .plane-card {
-            background: var(--card-bg);
+        /* المربع (الشريحة) */
+        .plane-square {
+            background: var(--card);
+            aspect-ratio: 1 / 1;
             border: 1px solid #333;
             border-radius: 15px;
-            padding: 25px;
+            overflow: hidden;
+            cursor: pointer;
+            position: relative;
+            transition: 0.4s;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .plane-square:hover {
+            border-color: var(--neon);
+            transform: translateY(-10px);
+            box-shadow: 0 0 20px var(--glass);
+        }
+
+        .plane-square img {
             width: 100%;
-            max-width: 600px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            transition: 0.3s;
-            border-left: 5px solid var(--neon-green);
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0.6;
+            transition: 0.4s;
         }
 
-        .stat-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
+        .plane-square:hover img {
+            opacity: 0.9;
+            transform: scale(1.1);
         }
 
-        .stat-item {
-            background: #262626;
-            padding: 10px;
-            border-radius: 8px;
+        .plane-info-overlay {
+            position: relative;
+            background: linear-gradient(transparent, black);
+            padding: 20px;
+            width: 100%;
         }
 
-        .stat-label {
-            display: block;
-            color: var(--neon-green);
-            font-size: 0.8rem;
-            margin-bottom: 5px;
+        .plane-info-overlay h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--neon);
         }
 
-        .stat-value {
-            font-size: 1.1rem;
-            font-weight: bold;
+        /* واجهة اختيار النسخة والبيانات */
+        #details-view {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg);
+            z-index: 100;
+            padding: 40px 20px;
+            box-sizing: border-box;
+            overflow-y: auto;
         }
 
-        .controls {
-            margin-top: 30px;
+        .back-btn {
+            background: transparent;
+            border: 2px solid var(--neon);
+            color: var(--neon);
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .variants-grid {
             display: flex;
             gap: 15px;
+            margin: 20px 0;
+            flex-wrap: wrap;
         }
 
-        button {
-            background: transparent;
-            border: 2px solid var(--neon-green);
-            color: var(--neon-green);
-            padding: 10px 25px;
+        .variant-btn {
+            background: var(--card);
+            border: 1px solid var(--neon);
+            color: white;
+            padding: 15px 30px;
             cursor: pointer;
-            font-weight: bold;
-            border-radius: 5px;
-            transition: 0.3s;
+            border-radius: 8px;
+            font-size: 1.1rem;
         }
 
-        button:hover {
-            background: var(--neon-green);
+        .variant-btn:hover {
+            background: var(--neon);
             color: black;
         }
 
-        .badge {
-            background: #d4a017;
-            color: black;
-            padding: 2px 8px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            float: left;
+        .specs-sheet {
+            background: var(--card);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            border: 1px solid #333;
+            max-width: 800px;
         }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 15px 0;
+            border-bottom: 1px solid #222;
+        }
+
+        .stat-label { color: var(--neon); font-weight: bold; }
+        
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-    <h1>FALCONS - رادار الصقور</h1>
-    <p>الموسوعة الشاملة للطائرات الحربية والمدنية</p>
-
-    <div class="plane-card" id="display-area">
-        <span class="badge" id="plane-type">حربية</span>
-        <h2 id="plane-name" style="margin-top: 0;">F-15SA Eagle</h2>
-        <hr style="border: 0.5px solid #333;">
-        
-        <div class="stat-grid">
-            <div class="stat-item">
-                <span class="stat-label">السرعة القصوى</span>
-                <span class="stat-value" id="speed">3,017 كم/س (2.5 Mach)</span>
+    <div id="home-view">
+        <h1>FALCONS - رادار الصقور 🦅</h1>
+        <div class="grid-container" id="planes-grid">
             </div>
-            <div class="stat-item">
-                <span class="stat-label">الحمولة التسليحية</span>
-                <span class="stat-value" id="payload">12 صاروخ جو-جو</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">العدد في السعودية</span>
-                <span class="stat-value" id="saudi-count">84 طائرة</span>
-            </div>
-            <div class="stat-item">
-                <span class="stat-label">الانتشار العالمي</span>
-                <span class="stat-value" id="world-count">1,200+ طائرة</span>
-            </div>
-        </div>
-        
-        <p style="margin-top: 20px; color: #aaa;">
-            <strong>المدن المتواجدة بها:</strong> <span id="cities">الظهران، الرياض، خميس مشيط</span>
-        </p>
     </div>
 
-    <div class="controls">
-        <button onclick="prevPlane()">⬅️ الطائرة السابقة</button>
-        <button onclick="nextPlane()">الطائرة التالية ➡️</button>
+    <div id="details-view">
+        <button class="back-btn" onclick="closeDetails()">⬅️ العودة للرئيسية</button>
+        <h1 id="selected-plane-title">اسم الطائرة</h1>
+        
+        <p>اختر النسخة (Model):</p>
+        <div class="variants-grid" id="variants-list"></div>
+
+        <div id="specs-container" class="hidden">
+            <div class="specs-sheet">
+                <h2 id="variant-title" style="color: var(--neon);"></h2>
+                <div class="stat-row"><span class="stat-label">السرعة القصوى:</span> <span id="s-speed"></span></div>
+                <div class="stat-row"><span class="stat-label">الحمولة التسليحية:</span> <span id="s-payload"></span></div>
+                <div class="stat-row"><span class="stat-label">العدد في السعودية:</span> <span id="s-saudi"></span></div>
+                <div class="stat-row"><span class="stat-label">العدد العالمي:</span> <span id="s-world"></span></div>
+                <div class="stat-row"><span class="stat-label">المدن المتواجدة بها:</span> <span id="s-cities"></span></div>
+            </div>
+        </div>
     </div>
 
     <script>
-        // هنا "بحر الأسئلة والمعلومات" - تقدر تزيد آلاف الطائرات في هذه المصفوفة
-        const planesData = [
-            {
-                name: "F-15SA (النسخة السعودية)",
-                type: "حربية",
-                speed: "3,017 كم/س (2.5 Mach)",
-                payload: "12 صاروخ جو-جو",
-                saudi: "84 طائرة",
-                world: "1,200+",
-                cities: "الظهران، الرياض، خميس مشيط"
+        // قاعدة البيانات - يمكنك إضافة مئات الطائرات هنا
+        const aviationDB = {
+            "F-15 Eagle": {
+                image: "https://images.unsplash.com/photo-1517976384346-3136801d605d?auto=format&fit=crop&w=500&q=80",
+                variants: {
+                    "F-15SA (السعودية)": {
+                        speed: "3,017 كم/س (2.5 Mach)",
+                        payload: "12 صاروخ (جو-جو) + قنابل موجهة",
+                        saudi: "84 طائرة",
+                        world: "1200+ (كل الفئات)",
+                        cities: "الرياض، الظهران، خميس مشيط"
+                    },
+                    "F-15C (سيد الأجواء)": {
+                        speed: "2,650 كم/س",
+                        payload: "8 صواريخ جو-جو",
+                        saudi: "60+ طائرة",
+                        world: "400+ طائرة",
+                        cities: "جدة، الطائف"
+                    }
+                }
             },
-            {
-                name: "بوينج 747-8 (جامبو)",
-                type: "مدنية",
-                speed: "988 كم/س",
-                payload: "410 - 467 راكب",
-                saudi: "متوفرة في الخطوط السعودية",
-                world: "1,500+ (كل الفئات)",
-                cities: "جدة، الرياض"
+            "Typhoon": {
+                image: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?auto=format&fit=crop&w=500&q=80",
+                variants: {
+                    "Tranche 3 (التايفون)": {
+                        speed: "2,495 كم/س",
+                        payload: "صواريخ ميتيور وستروم شادو",
+                        saudi: "72 طائرة",
+                        world: "600+",
+                        cities: "الطائف، الظهران"
+                    }
+                }
             },
-            {
-                name: "Eurofighter Typhoon",
-                type: "حربية",
-                speed: "2,495 كم/س (2.0 Mach)",
-                payload: "صواريخ ميتيور وستروم شادو",
-                saudi: "72 طائرة",
-                world: "600+",
-                cities: "الطائف، الظهران"
-            },
-            {
-                name: "إيرباص A380",
-                type: "مدنية",
-                speed: "900 كم/س",
-                payload: "525 - 853 راكب",
-                saudi: "موجودة في المطارات الدولية",
-                world: "251 طائرة",
-                cities: "جدة، الرياض"
+            "Boeing 747": {
+                image: "https://images.unsplash.com/photo-1544016768-982d1554f0b9?auto=format&fit=crop&w=500&q=80",
+                variants: {
+                    "747-8 (جامبو)": {
+                        speed: "988 كم/س",
+                        payload: "467 راكب",
+                        saudi: "الأسطول الملكي / الخطوط السعودية",
+                        world: "1,500+",
+                        cities: "جدة، الرياض"
+                    }
+                }
             }
-        ];
+        };
 
-        let currentIndex = 0;
+        // بناء الشبكة عند فتح الموقع
+        const grid = document.getElementById('planes-grid');
+        for (let plane in aviationDB) {
+            const square = document.createElement('div');
+            square.className = 'plane-square';
+            square.onclick = () => openDetails(plane);
+            square.innerHTML = `
+                <img src="${aviationDB[plane].image}" alt="${plane}">
+                <div class="plane-info-overlay">
+                    <h2>${plane}</h2>
+                </div>
+            `;
+            grid.appendChild(square);
+        }
 
-        function updateDisplay() {
-            const plane = planesData[currentIndex];
-            document.getElementById('plane-name').innerText = plane.name;
-            document.getElementById('plane-type').innerText = plane.type;
-            document.getElementById('speed').innerText = plane.speed;
-            document.getElementById('payload').innerText = plane.payload;
-            document.getElementById('saudi-count').innerText = plane.saudi;
-            document.getElementById('world-count').innerText = plane.world;
-            document.getElementById('cities').innerText = plane.cities;
+        function openDetails(planeName) {
+            document.getElementById('home-view').style.display = 'none';
+            document.getElementById('details-view').style.display = 'block';
+            document.getElementById('selected-plane-title').innerText = planeName;
             
-            // تغيير لون التاق حسب النوع
-            const badge = document.getElementById('plane-type');
-            badge.style.background = plane.type === "حربية" ? "#d4a017" : "#007bff";
+            const variantList = document.getElementById('variants-list');
+            variantList.innerHTML = ''; // تنظيف القائمة
+            document.getElementById('specs-container').classList.add('hidden');
+
+            const variants = aviationDB[planeName].variants;
+            for (let vName in variants) {
+                const btn = document.createElement('button');
+                btn.className = 'variant-btn';
+                btn.innerText = vName;
+                btn.onclick = () => showSpecs(planeName, vName);
+                variantList.appendChild(btn);
+            }
         }
 
-        function nextPlane() {
-            currentIndex = (currentIndex + 1) % planesData.length;
-            updateDisplay();
+        function showSpecs(planeName, vName) {
+            const data = aviationDB[planeName].variants[vName];
+            document.getElementById('specs-container').classList.remove('hidden');
+            document.getElementById('variant-title').innerText = vName;
+            document.getElementById('s-speed').innerText = data.speed;
+            document.getElementById('s-payload').innerText = data.payload;
+            document.getElementById('s-saudi').innerText = data.saudi;
+            document.getElementById('s-world').innerText = data.world;
+            document.getElementById('s-cities').innerText = data.cities;
         }
 
-        function prevPlane() {
-            currentIndex = (currentIndex - 1 + planesData.length) % planesData.length;
-            updateDisplay();
+        function closeDetails() {
+            document.getElementById('home-view').style.display = 'block';
+            document.getElementById('details-view').style.display = 'none';
         }
     </script>
 </body>
