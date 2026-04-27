@@ -3,25 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FALCONS - Global Encyclopedia</title>
+    <title>FALCONS - موسوعة الصقور</title>
     <style>
         :root {
             --neon: #00ff41;
             --bg: #050505;
             --card: #121212;
+            --saudi-green: #006C35;
         }
 
         body {
             background-color: var(--bg);
             color: white;
-            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             margin: 0;
             padding: 0;
             overflow-x: hidden;
-            transition: 0.3s;
         }
 
-        /* شاشة البداية */
+        /* شاشة اختيار اللغة والبداية */
         #start-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -34,80 +34,85 @@
             text-align: center;
         }
 
-        .lang-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            margin-bottom: 30px;
-            max-width: 500px;
+        .lang-btns { margin-bottom: 20px; }
+        
+        .start-btn, .lang-btn {
+            background: transparent;
+            border: 2px solid var(--neon);
+            color: var(--neon);
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            border-radius: 50px;
+            transition: 0.3s;
+            margin: 10px;
+            font-weight: bold;
         }
 
-        .lang-btn {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid #333;
-            color: white;
-            padding: 10px;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: 0.3s;
+        .start-btn:hover, .lang-btn.active {
+            background: var(--neon);
+            color: black;
+            box-shadow: 0 0 20px var(--neon);
+        }
+
+        /* تنسيق عبارة صنع في السعودية */
+        .made-in-saudi {
+            margin-top: 30px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            color: #fff;
             display: flex;
             flex-direction: column;
             align-items: center;
-            font-size: 0.9rem;
+            gap: 10px;
         }
 
-        .lang-btn:hover, .lang-btn.active {
-            border-color: var(--neon);
-            background: rgba(0, 255, 65, 0.1);
-            transform: scale(1.05);
+        .saudi-flag {
+            width: 40px;
+            height: 25px;
+            background-color: var(--saudi-green);
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
         }
 
-        .start-btn {
-            background: var(--neon);
-            color: black;
-            border: none;
-            padding: 15px 60px;
-            font-size: 1.3rem;
-            cursor: pointer;
-            border-radius: 50px;
-            font-weight: bold;
-            box-shadow: 0 0 20px rgba(0, 255, 65, 0.4);
-        }
-
-        .made-in-saudi {
-            margin-top: 40px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            color: #aaa;
-        }
+        .hidden { display: none !important; }
 
         /* واجهة المربعات */
         .container { padding: 20px; }
+        h1 { text-align: center; color: var(--neon); text-shadow: 0 0 10px var(--neon); }
+
         .grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
+            gap: 25px;
             max-width: 1200px;
-            margin: 0 auto;
+            margin: 20px auto;
         }
 
         .plane-square {
             background: var(--card);
-            aspect-ratio: 1/1;
+            aspect-ratio: 1 / 1;
+            border: 1px solid #333;
             border-radius: 15px;
             overflow: hidden;
-            position: relative;
             cursor: pointer;
-            border: 1px solid #222;
+            position: relative;
+            transition: 0.3s;
         }
 
-        .plane-square img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; }
-        
+        .plane-square:hover { border-color: var(--neon); transform: scale(1.05); }
+        .plane-square img { width: 100%; height: 100%; object-fit: cover; }
+
         .plane-info-overlay {
             position: absolute;
-            bottom: 0; width: 100%;
+            bottom: 0;
             background: linear-gradient(transparent, black);
             padding: 15px;
+            width: 100%;
             box-sizing: border-box;
         }
 
@@ -120,136 +125,130 @@
             padding: 20px;
             box-sizing: border-box;
             overflow-y: auto;
-            display: none;
         }
 
         .specs-sheet {
             background: var(--card);
             padding: 20px;
             border-radius: 15px;
-            border-left: 4px solid var(--neon);
+            border: 1px solid var(--neon);
             max-width: 600px;
             margin-top: 20px;
         }
 
-        .stat-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid #222;
-        }
-
-        .hidden { display: none !important; }
-        .rtl { direction: rtl; text-align: right; }
-        .ltr { direction: ltr; text-align: left; }
+        .stat-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #222; }
     </style>
 </head>
 <body>
 
     <div id="start-screen">
-        <h1 id="welcome-msg" style="margin-bottom:30px;">FALCONS ENCYCLOPEDIA</h1>
-        
-        <div class="lang-grid">
-            <button class="lang-btn active" onclick="changeLang('ar')"><span>🇸🇦</span> العربية</button>
-            <button class="lang-btn" onclick="changeLang('en')"><span>🇺🇸</span> English</button>
-            <button class="lang-btn" onclick="changeLang('fr')"><span>🇫🇷</span> Français</button>
-            <button class="lang-btn" onclick="changeLang('zh')"><span>🇨🇳</span> 中文</button>
-            <button class="lang-btn" onclick="changeLang('ru')"><span>🇷🇺</span> Русский</button>
-            <button class="lang-btn" onclick="changeLang('es')"><span>🇪🇸</span> Español</button>
+        <h1 id="welcome-text">مرحباً بك في موسوعة الصقور</h1>
+        <div class="lang-btns">
+            <button class="lang-btn active" onclick="setLang('ar')">العربية</button>
+            <button class="lang-btn" onclick="setLang('en')">English</button>
         </div>
-
-        <button class="start-btn" id="start-text" onclick="showMain()">ابدأ</button>
+        <button class="start-btn" id="btn-start" onclick="goMain()">ابدأ / START</button>
         
-        <div class="made-in-saudi">MADE IN SAUDI</div>
+        <div class="made-in-saudi">
+            <div class="saudi-flag">🇸🇦</div>
+            <span>MADE IN SAUDI</span>
+        </div>
     </div>
 
     <div id="main-ui" class="hidden">
         <div class="container">
-            <h1 id="main-title" style="color:var(--neon); text-align:center;">FALCONS</h1>
+            <h1 id="main-title">رادار الصقور 🦅</h1>
             <div class="grid-container" id="planes-grid"></div>
         </div>
     </div>
 
-    <div id="details-view">
-        <button class="start-btn" onclick="closeDetails()" style="padding:10px 30px; font-size:1rem;">BACK</button>
-        <h1 id="plane-title" style="margin-top:20px;"></h1>
-        <div class="specs-sheet">
-            <div class="stat-row"><span id="lbl-speed" style="color:var(--neon);"></span> <span id="val-speed"></span></div>
-            <div class="stat-row"><span id="lbl-payload" style="color:var(--neon);"></span> <span id="val-payload"></span></div>
-            <div class="stat-row"><span id="lbl-saudi" style="color:var(--neon);"></span> <span id="val-saudi"></span></div>
+    <div id="details-view" class="hidden">
+        <button class="start-btn" onclick="closeDetails()" style="padding: 10px 20px;">⬅️ عودة / BACK</button>
+        <h1 id="det-name"></h1>
+        <div id="variants-list"></div>
+        <div id="specs-box" class="hidden">
+            <div class="specs-sheet">
+                <h3 id="v-title" style="color: var(--neon);"></h3>
+                <div class="stat-row"><span id="lbl-speed">السرعة:</span> <span id="val-speed"></span></div>
+                <div class="stat-row"><span id="lbl-payload">الحمولة:</span> <span id="val-payload"></span></div>
+                <div class="stat-row"><span id="lbl-saudi">في السعودية:</span> <span id="val-saudi"></span></div>
+            </div>
         </div>
     </div>
 
     <script>
-        const uiText = {
-            ar: { welcome: "مرحباً بك في موسوعة الصقور", start: "ابدأ", speed: "السرعة:", payload: "الحمولة:", saudi: "في السعودية:", dir: "rtl" },
-            en: { welcome: "Welcome to Falcons Encyclopedia", start: "START", speed: "Speed:", payload: "Payload:", saudi: "In Saudi:", dir: "ltr" },
-            fr: { welcome: "Bienvenue à l'Encyclopédie", start: "COMMENCER", speed: "Vitesse:", payload: "Charge:", saudi: "En Arabie:", dir: "ltr" },
-            zh: { welcome: "欢迎来到猎鹰百科全书", start: "开始", speed: "速度:", payload: "有效载荷:", saudi: "在沙特阿拉伯:", dir: "ltr" },
-            ru: { welcome: "Добро пожаловать в Энциклопедию", start: "НАЧАТЬ", speed: "Скорость:", payload: "Нагрузка:", saudi: "В Саудовской:", dir: "ltr" },
-            es: { welcome: "Bienvenido a la Enciclopedia", start: "EMPEZAR", speed: "Velocidad:", payload: "Carga útil:", saudi: "En Arabia:", dir: "ltr" }
-        };
-
-        const planesData = {
-            "F-15SA Eagle": {
-                img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/F-15SA_Saudi_Arabia_Air_Force.jpg/800px-F-15SA_Saudi_Arabia_Air_Force.jpg",
-                specs: {
-                    ar: { s: "3,017 كم/س", p: "12 صاروخ", sa: "84 طائرة" },
-                    en: { s: "3,017 km/h", p: "12 Missiles", sa: "84 Aircraft" },
-                    fr: { s: "3,017 km/h", p: "12 Missiles", sa: "84 Avions" },
-                    zh: { s: "3,017 公里/小时", p: "12 枚导弹", sa: "84 架飞机" },
-                    ru: { s: "3,017 км/ч", p: "12 ракет", sa: "84 самолета" },
-                    es: { s: "3,017 km/h", p: "12 misiles", sa: "84 aviones" }
-                }
-            }
-        };
-
         let currentLang = 'ar';
 
-        function changeLang(lang) {
-            currentLang = lang;
-            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            
-            document.getElementById('welcome-msg').innerText = uiText[lang].welcome;
-            document.getElementById('start-text').innerText = uiText[lang].start;
-            document.body.className = uiText[lang].dir;
+        // قاعدة البيانات (يمكنك إضافة المزيد هنا)
+        const data = {
+            "F-15SA Eagle": {
+                img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/F-15SA_Saudi_Arabia_Air_Force.jpg/800px-F-15SA_Saudi_Arabia_Air_Force.jpg",
+                ar: { speed: "3,017 كم/س", payload: "12 صاروخ", saudi: "84 طائرة" },
+                en: { speed: "3,017 km/h", payload: "12 Missiles", saudi: "84 Aircraft" }
+            },
+            "Typhoon": {
+                img: "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a5/Eurofighter_Typhoon_FGR4_at_RIAT_2016_mod_2.jpg/800px-Eurofighter_Typhoon_FGR4_at_RIAT_2016_mod_2.jpg",
+                ar: { speed: "2,495 كم/س", payload: "صواريخ ميتيور", saudi: "72 طائرة" },
+                en: { speed: "2,495 km/h", payload: "Meteor Missiles", saudi: "72 Aircraft" }
+            },
+            "Boeing 747": {
+                img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/33/Saudi_Arabian_Boeing_747-400_Felici.jpg/800px-Saudi_Arabian_Boeing_747-400_Felici.jpg",
+                ar: { speed: "988 كم/س", payload: "467 راكب", saudi: "متوفرة" },
+                en: { speed: "988 km/h", payload: "467 Passengers", saudi: "Available" }
+            }
+        };
+
+        function setLang(l) {
+            currentLang = l;
+            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('welcome-text').innerText = l === 'ar' ? 'مرحباً بك في موسوعة الصقور' : 'Welcome to Falcons Encyclopedia';
         }
 
-        function showMain() {
+        function goMain() {
             document.getElementById('start-screen').classList.add('hidden');
             document.getElementById('main-ui').classList.remove('hidden');
+            buildGrid();
+        }
+
+        function buildGrid() {
             const grid = document.getElementById('planes-grid');
             grid.innerHTML = '';
-            for(let name in planesData) {
-                const item = document.createElement('div');
-                item.className = 'plane-square';
-                item.onclick = () => showSpecs(name);
-                item.innerHTML = `<img src="${planesData[name].img}"><div class="plane-info-overlay"><h2>${name}</h2></div>`;
-                grid.appendChild(item);
+            for (let p in data) {
+                const div = document.createElement('div');
+                div.className = 'plane-square';
+                div.onclick = () => showDetails(p);
+                div.innerHTML = `<img src="${data[p].img}"><div class="plane-info-overlay"><h2>${p}</h2></div>`;
+                grid.appendChild(div);
             }
         }
 
-        function showSpecs(name) {
+        function showDetails(p) {
             document.getElementById('main-ui').classList.add('hidden');
-            document.getElementById('details-view').style.display = 'block';
-            document.getElementById('plane-title').innerText = name;
+            document.getElementById('details-view').classList.remove('hidden');
+            document.getElementById('det-name').innerText = p;
             
-            const langData = uiText[currentLang];
-            const specData = planesData[name].specs[currentLang];
+            const vList = document.getElementById('variants-list');
+            vList.innerHTML = `<button class="variant-btn" onclick="showSpecs('${p}')">${currentLang === 'ar' ? 'النسخة الأساسية' : 'Main Model'}</button>`;
+        }
+
+        function showSpecs(p) {
+            const d = data[p][currentLang];
+            document.getElementById('specs-box').classList.remove('hidden');
+            document.getElementById('val-speed').innerText = d.speed;
+            document.getElementById('val-payload').innerText = d.payload;
+            document.getElementById('val-saudi').innerText = d.saudi;
             
-            document.getElementById('lbl-speed').innerText = langData.speed;
-            document.getElementById('lbl-payload').innerText = langData.payload;
-            document.getElementById('lbl-saudi').innerText = langData.saudi;
-            
-            document.getElementById('val-speed').innerText = specData.s;
-            document.getElementById('val-payload').innerText = specData.p;
-            document.getElementById('val-saudi').innerText = specData.sa;
+            // تحديث العناوين حسب اللغة
+            document.getElementById('lbl-speed').innerText = currentLang === 'ar' ? 'السرعة:' : 'Speed:';
+            document.getElementById('lbl-payload').innerText = currentLang === 'ar' ? 'الحمولة:' : 'Payload:';
+            document.getElementById('lbl-saudi').innerText = currentLang === 'ar' ? 'في السعودية:' : 'In Saudi:';
         }
 
         function closeDetails() {
-            document.getElementById('details-view').style.display = 'none';
+            document.getElementById('details-view').classList.add('hidden');
             document.getElementById('main-ui').classList.remove('hidden');
+            document.getElementById('specs-box').classList.add('hidden');
         }
     </script>
 </body>
