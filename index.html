@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FALCONS - موسوعة الصقور</title>
+    <title>FALCONS - موسوعة الصقور المحدثة</title>
     <style>
         :root {
             --neon: #00ff41;
@@ -31,8 +31,8 @@
         /* حاوية المربعات */
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
             max-width: 1200px;
             margin: 0 auto;
         }
@@ -65,26 +65,27 @@
             position: absolute;
             top: 0;
             left: 0;
-            opacity: 0.6;
+            opacity: 0.7; /* لزيادة وضوح الصورة */
             transition: 0.4s;
         }
 
         .plane-square:hover img {
-            opacity: 0.9;
+            opacity: 1;
             transform: scale(1.1);
         }
 
         .plane-info-overlay {
             position: relative;
-            background: linear-gradient(transparent, black);
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
             padding: 20px;
             width: 100%;
         }
 
         .plane-info-overlay h2 {
             margin: 0;
-            font-size: 1.5rem;
+            font-size: 1.6rem;
             color: var(--neon);
+            text-shadow: 0 0 5px black;
         }
 
         /* واجهة اختيار النسخة والبيانات */
@@ -110,6 +111,12 @@
             cursor: pointer;
             margin-bottom: 20px;
             border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .back-btn:hover {
+            background: var(--neon);
+            color: black;
         }
 
         .variants-grid {
@@ -127,6 +134,7 @@
             cursor: pointer;
             border-radius: 8px;
             font-size: 1.1rem;
+            transition: 0.3s;
         }
 
         .variant-btn:hover {
@@ -165,66 +173,114 @@
 
     <div id="details-view">
         <button class="back-btn" onclick="closeDetails()">⬅️ العودة للرئيسية</button>
-        <h1 id="selected-plane-title">اسم الطائرة</h1>
+        <h1 id="selected-plane-title" style="text-align: right; margin-right: 20px;">اسم الطائرة</h1>
         
-        <p>اختر النسخة (Model):</p>
-        <div class="variants-grid" id="variants-list"></div>
+        <p style="margin-right: 20px;">اختر النسخة (Model) المطلوبة:</p>
+        <div class="variants-grid" id="variants-list" style="margin-right: 20px;"></div>
 
-        <div id="specs-container" class="hidden">
+        <div id="specs-container" class="hidden" style="margin-right: 20px;">
             <div class="specs-sheet">
-                <h2 id="variant-title" style="color: var(--neon);"></h2>
+                <h2 id="variant-title" style="color: var(--neon); border-bottom: 1px solid #333; padding-bottom: 10px;"></h2>
                 <div class="stat-row"><span class="stat-label">السرعة القصوى:</span> <span id="s-speed"></span></div>
-                <div class="stat-row"><span class="stat-label">الحمولة التسليحية:</span> <span id="s-payload"></span></div>
+                <div class="stat-row"><span class="stat-label">الحمولة التسليحية / السعة:</span> <span id="s-payload"></span></div>
                 <div class="stat-row"><span class="stat-label">العدد في السعودية:</span> <span id="s-saudi"></span></div>
-                <div class="stat-row"><span class="stat-label">العدد العالمي:</span> <span id="s-world"></span></div>
-                <div class="stat-row"><span class="stat-label">المدن المتواجدة بها:</span> <span id="s-cities"></span></div>
+                <div class="stat-row"><span class="stat-label">العدد العالمي التقريبي:</span> <span id="s-world"></span></div>
+                <div class="stat-row"><span class="stat-label">قواعد العمليات / المدن:</span> <span id="s-cities"></span></div>
             </div>
         </div>
     </div>
 
     <script>
-        // قاعدة البيانات - يمكنك إضافة مئات الطائرات هنا
+        // قاائمة البيانات الضخمة (بحر المعلومات)
         const aviationDB = {
-            "F-15 Eagle": {
-                image: "https://images.unsplash.com/photo-1517976384346-3136801d605d?auto=format&fit=crop&w=500&q=80",
+            "F-15SA Eagle": {
+                // تم وضع رابط الصورة التي اخترتها هنا
+                image: "https://share.google/7Jto8aTPOewgxCm0b",
                 variants: {
-                    "F-15SA (السعودية)": {
-                        image: "https://share.google/7Jto8aTPOewgxCm0b
-                        speed: "3,017 كم/س (2.5 Mach)",
-                        payload: "12 صاروخ (جو-جو) + قنابل موجهة",
-                        saudi: "84 طائرة",
+                    "F-15SA (القوات الجوية السعودية)": {
+                        speed: "3,017 كم/س (2.5+ Mach)",
+                        payload: "12 صاروخ (جو-جو) + قنابل موجهة بدقة",
+                        saudi: "84 طائرة (النسخة الأحدث)",
                         world: "1200+ (كل الفئات)",
-                        cities: "الرياض، الظهران، خميس مشيط"
+                        cities: "خميس مشيط، الظهران، الرياض"
                     },
-                    "F-15C (سيد الأجواء)": {
+                    "F-15 Strike Eagle (أخرى)": {
                         speed: "2,650 كم/س",
-                        payload: "8 صواريخ جو-جو",
-                        saudi: "60+ طائرة",
-                        world: "400+ طائرة",
-                        cities: "جدة، الطائف"
+                        payload: "8 صواريخ جو-جو / حمولة هجومية ضخمة",
+                        saudi: "60+ طائرة F-15C/D",
+                        world: "500+ طائرة",
+                        cities: "تبوك، جدة"
                     }
                 }
             },
-            "Typhoon": {
-                image: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?auto=format&fit=crop&w=500&q=80",
+            "Eurofighter Typhoon": {
+                image: "https://images.unsplash.com/photo-1516939884455-1445c8652f83?q=80&w=600",
                 variants: {
-                    "Tranche 3 (التايفون)": {
-                        speed: "2,495 كم/س",
-                        payload: "صواريخ ميتيور وستروم شادو",
+                    "Tranche 3 (التايفون السعودية)": {
+                        speed: "2,495 كم/س (2.0 Mach)",
+                        payload: "صواريخ ميتيور، ستروم شادو، قنابل بايفوي",
                         saudi: "72 طائرة",
                         world: "600+",
                         cities: "الطائف، الظهران"
                     }
                 }
             },
-            "Boeing 747": {
-                image: "https://images.unsplash.com/photo-1544016768-982d1554f0b9?auto=format&fit=crop&w=500&q=80",
+            "F-35 Lightning II": {
+                image: "https://images.unsplash.com/photo-1581091215367-176a91d17e62?q=80&w=600",
                 variants: {
-                    "747-8 (جامبو)": {
+                    "F-35A (الجيل الخامس)": {
+                        speed: "1,930 كم/س (1.6 Mach)",
+                        payload: "تسليح داخلي (للخفاء) + تسليح خارجي",
+                        saudi: "غير متوفرة حالياً",
+                        world: "1,000+",
+                        cities: "قواعد أمريكية ودولية"
+                    }
+                }
+            },
+            "Su-57 Felon": {
+                image: "https://images.unsplash.com/photo-1627632661571-08f37648f07b?q=80&w=600",
+                variants: {
+                    "Su-57 (النسخة الروسية)": {
+                        speed: "2,135 كم/س (2.0 Mach)",
+                        payload: "صواريخ جو-جو بعيدة المدى، وقنابل موجهة",
+                        saudi: "غير متوفرة",
+                        world: "20-30 طائرة حالياً",
+                        cities: "قواعد روسية"
+                    }
+                }
+            },
+            "Rafael (الفرنسية)": {
+                image: "https://images.unsplash.com/photo-1611090159419-b001ae6b8f3a?q=80&w=600",
+                variants: {
+                    "Rafale F4": {
+                        speed: "2,222 كم/س",
+                        payload: "صواريخ ميكا وميتيور، صاروخ كروز",
+                        saudi: "مفاوضات جارية",
+                        world: "250+",
+                        cities: "قواعد فرنسية، مصر، قطر، الإمارات"
+                    }
+                }
+            },
+            "Boeing 747": {
+                image: "https://images.unsplash.com/photo-1544016768-982d1554f0b9?q=80&w=600",
+                variants: {
+                    "747-8 Intercontinental": {
                         speed: "988 كم/س",
-                        payload: "467 راكب",
-                        saudi: "الأسطول الملكي / الخطوط السعودية",
-                        world: "1,500+",
+                        payload: "السعة: 467-525 راكب",
+                        saudi: "طائرات كبار الشخصيات / الشحن",
+                        world: "1,500+ (كل الفئات)",
+                        cities: "جدة، الرياض"
+                    }
+                }
+            },
+            "Airbus A380": {
+                image: "https://images.unsplash.com/photo-1594396001211-1372a81f3d61?q=80&w=600",
+                variants: {
+                    "A380-800": {
+                        speed: "900 كم/س",
+                        payload: "السعة: 525 - 853 راكب (العملاقة)",
+                        saudi: "موجودة في المطارات الدولية",
+                        world: "251 طائرة (توقف الإنتاج)",
                         cities: "جدة، الرياض"
                     }
                 }
